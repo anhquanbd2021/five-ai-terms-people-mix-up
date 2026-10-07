@@ -1,0 +1,8 @@
+[
+  { "team": "support-bot", "need": "Answers must reflect the refund policy updated this morning", "picked": "finetune" },
+  { "team": "docs-search", "need": "Search answers over the company wiki that changes weekly", "picked": "rag" },
+  { "team": "voice-assistant", "need": "Always respond in a terse military tone", "picked": "rag" },
+  { "team": "sales-copilot", "need": "Knows the new pricing sheet released this week", "picked": "finetune" },
+  { "team": "compliance-drafter", "need": "Formats every filing in the regulator's JSON schema", "picked": "finetune" },
+  { "team": "news-bot", "need": "Answers questions about current events from a live feed", "picked": "rag" }
+]

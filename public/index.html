@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="dark light">
+  <meta name="description" content="Term Cost Lab — pick the wrong side of five AI term pairs and watch the failure: stale fine-tunes, runaway loops, flaky prompts, lost context, shipped prototypes.">
+  <title>Term Cost Lab — five AI term pairs that cost money</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;600;700&family=Inter:wght@400..700&family=JetBrains+Mono:wght@400..700&family=Space+Grotesk:wght@300..700&display=swap">
+  <link rel="stylesheet" href="/styles.css">
+<!-- pb-shell --><link rel="stylesheet" href="./pb-shell.css"><!-- pb-shell --><!-- pb-back --><link rel="stylesheet" href="./pb-back.css"><!-- pb-back --></head>
+<body>
+<a class="skip-link" href="#pairs-title">Skip to labs</a>
+<main id="main">
+  <nav aria-label="Primary"><a aria-current="page" href="/">Lab</a><a href="/guide.html">Guide</a><a href="https://github.com/anhquanbd2021/five-ai-terms-people-mix-up">Source</a></nav>
+  <header class="hero">
+    <div>
+      <p class="eyebrow">Term Cost Lab · 5 pairs, 5 simulators</p>
+      <h1>The terms are free.<br>The confusion is expensive.</h1>
+      <p class="lede">Five AI terms people mix up constantly — each pair a simulator where you can pick the wrong side and watch the bill arrive. Fine-tune for facts and get a stale answer; run a loop with no goal and burn the budget; ship a prototype and meet the delivery gates.</p>
+    </div>
+    <p class="warning"><strong>Safe educational demo.</strong> Everything is a deterministic simulation in your browser — no model is called, nothing is trained, no money is spent. The prices are illustrative; the failure modes are real.</p>
+  </header>
+
+  <section class="panel" aria-labelledby="pairs-title">
+    <p class="eyebrow">The pairs</p><h2 id="pairs-title">Five terms, five tests</h2>
+    <div class="table-wrap"><table class="pairs-table"><thead>
+      <tr><th>Pair</th><th>The confusion</th><th>The price</th><th>The one-line test</th></tr>
+    </thead><tbody id="pairs-body"></tbody></table></div>
+  </section>
+
+  <section class="workspace" aria-label="RAG vs fine-tuning lab">
+    <section class="panel" aria-labelledby="freshness-title">
+      <div class="panel-head"><p class="eyebrow">Lab 1 · the expensive one</p><h2 id="freshness-title">RAG vs. fine-tuning</h2></div>
+      <p class="muted">A fine-tuned model freezes today's docs into its weights. Update a doc, ask again, and compare.</p>
+      <ol id="doc-list" class="results" aria-label="Doc store"></ol>
+      <label for="update-text">Update the refund policy<textarea id="update-text" rows="2" spellcheck="false">Enterprise refunds are approved within 14 days of invoice.</textarea></label>
+      <button id="run-freshness" type="button">Train → update → ask both</button>
+      <p class="muted">Then ask for <code>json</code> output below — the pair cuts both ways: retrieval can't change behaviour.</p>
+      <button id="run-format" type="button">Ask both for JSON output</button>
+    </section>
+    <section class="panel" aria-labelledby="freshness-result-title">
+      <div class="section-heading"><div><p class="eyebrow">Same question, two systems</p><h2 id="freshness-result-title">"What is the enterprise refund window?"</h2></div><span id="freshness-badge" class="badge" role="status" aria-live="polite">Ready</span></div>
+      <div class="comparison">
+        <article id="ft-card"><p class="eyebrow danger-text">Fine-tuned (frozen snapshot)</p><pre class="answer" id="ft-answer">—</pre><p class="muted" id="ft-meta"></p></article>
+        <article id="rag-card"><p class="eyebrow success-text">RAG (reads the live store)</p><pre class="answer" id="rag-answer">—</pre><p class="muted" id="rag-meta"></p></article>
+      </div>
+      <p class="muted" id="freshness-note" role="status" aria-live="polite"></p>
+    </section>
+  </section>
+
+  <section class="workspace" aria-label="Loop vs goal lab">
+    <section class="panel" aria-labelledby="loop-title">
+      <div class="panel-head"><p class="eyebrow">Lab 2</p><h2 id="loop-title">Loop vs. goal</h2></div>
+      <p class="muted">Task: <em>collect citations until you have 3</em>. Each iteration is one citation and costs $0.02 (illustrative). The goal is the stop condition — remove it and the loop runs to the budget cap.</p>
+      <div class="toggles">
+        <label><input type="checkbox" id="use-goal" checked> give the loop a goal: <code>progress ≥ 3</code></label>
+      </div>
+      <button id="run-loop" type="button">Run the loop</button>
+    </section>
+    <section class="panel" aria-labelledby="loop-result-title">
+      <div class="section-heading"><div><p class="eyebrow">Run report</p><h2 id="loop-result-title">Iterations</h2></div><span id="loop-badge" class="badge" role="status" aria-live="polite">Ready</span></div>
+      <div class="meter burn"><div id="loop-meter" style="width:0%"></div></div>
+      <ul id="loop-trace" class="iter-list"></ul>
+      <p class="muted" id="loop-note" role="status" aria-live="polite"></p>
+    </section>
+  </section>
+
+  <section class="workspace" aria-label="Prompt vs harness lab">
+    <section class="panel" aria-labelledby="harness-title">
+      <div class="panel-head"><p class="eyebrow">Lab 3</p><h2 id="harness-title">Prompt vs. harness</h2></div>
+      <p class="muted">The model returns JSON — except 60% of calls, when it wraps the answer in chatty prose or truncates it mid-object. A bare <code>JSON.parse(output)</code> caller fails. A harness repairs the wrapped ones, retries the truncated ones, and validates everything.</p>
+      <label for="trials">Trials<input id="trials" type="number" value="200" min="10" max="2000"></label>
+      <button id="run-harness" type="button">Run both callers</button>
+    </section>
+    <section class="panel" aria-labelledby="harness-result-title">
+      <div class="section-heading"><div><p class="eyebrow">Success count</p><h2 id="harness-result-title">Valid answers</h2></div><span id="harness-badge" class="badge" role="status" aria-live="polite">Ready</span></div>
+      <div class="comparison">
+        <article><p class="eyebrow danger-text">Raw prompt</p><pre class="answer" id="raw-score">—</pre><div class="meter burn"><div id="raw-meter" style="width:0%"></div></div></article>
+        <article><p class="eyebrow success-text">Harness (repair + retry + validate)</p><pre class="answer" id="harness-score">—</pre><div class="meter"><div id="harness-meter" style="width:0%"></div></div></article>
+      </div>
+      <p class="muted" id="harness-note" role="status" aria-live="polite"></p>
+    </section>
+  </section>
+
+  <section class="workspace" aria-label="Context vs memory lab">
+    <section class="panel" aria-labelledby="memory-title">
+      <div class="panel-head"><p class="eyebrow">Lab 4</p><h2 id="memory-title">Context vs. memory</h2></div>
+      <p class="muted">Turn 1: the user says <em>"I prefer terse answers — bullet points."</em> Eight turns later, does the model still know? Context is a 4-turn sliding window; memory writes the preference to a store.</p>
+      <div class="toggles">
+        <label><input type="radio" name="mem-mode" value="window" checked> context window only</label>
+        <label><input type="radio" name="mem-mode" value="full"> stuff the full history into every call</label>
+        <label><input type="radio" name="mem-mode" value="memory"> small window + a memory store</label>
+      </div>
+      <button id="run-memory" type="button">Run the conversation</button>
+    </section>
+    <section class="panel" aria-labelledby="memory-result-title">
+      <div class="section-heading"><div><p class="eyebrow">Recall probe at turn 9</p><h2 id="memory-result-title">"style" preference</h2></div><span id="memory-badge" class="badge" role="status" aria-live="polite">Ready</span></div>
+      <pre class="answer" id="memory-result">—</pre>
+      <div class="meter burn"><div id="memory-meter" style="width:0%"></div></div>
+      <p class="muted" id="memory-note" role="status" aria-live="polite"></p>
+    </section>
+  </section>
+
+  <section class="workspace" aria-label="Prototype vs production lab">
+    <section class="panel" aria-labelledby="gates-title">
+      <div class="panel-head"><p class="eyebrow">Lab 5</p><h2 id="gates-title">Prototype vs. production</h2></div>
+      <p class="muted">The weekend prototype passes the learning gates — it runs and answers the question. Ship it to production and the delivery gates answer back: evals, rollback, monitoring, access control.</p>
+      <label for="artifact">Artifact<span class="select-wrap"><select id="artifact"><option value="prototype">weekend prototype</option><option value="hardened">hardened build</option></select></span></label>
+      <label for="stage">Stage<span class="select-wrap"><select id="stage"><option value="prototype">prototype (learning)</option><option value="production" selected>production (delivery)</option></select></span></label>
+      <button id="run-gates" type="button">Try to ship it</button>
+    </section>
+    <section class="panel" aria-labelledby="gates-result-title">
+      <div class="section-heading"><div><p class="eyebrow">Gate check</p><h2 id="gates-result-title">Verdict</h2></div><span id="gates-badge" class="badge" role="status" aria-live="polite">Ready</span></div>
+      <ol id="gates-list" class="results"></ol>
+      <p class="muted" id="gates-note" role="status" aria-live="polite"></p>
+    </section>
+  </section>
+
+  <p class="foot-line"><a href="/guide.html">Read the pair-by-pair guide</a> · <a href="https://github.com/anhquanbd2021/five-ai-terms-people-mix-up">Inspect source and tests</a></p>
+</main>
+<script type="module" src="/app.js"></script>
+<!-- pb-shell --><a class="pb-shell" href="https://github.com/anhquanbd2021/five-ai-terms-people-mix-up" title="five-ai-terms-people-mix-up — an Article Playbook demo (view source)"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="2" y="2" width="9" height="9" rx="2" fill="#2dd4bf"/><rect x="13" y="2" width="9" height="9" rx="2" fill="#2dd4bf" opacity=".45"/><rect x="2" y="13" width="9" height="9" rx="2" fill="#2dd4bf" opacity=".45"/><rect x="13" y="13" width="9" height="9" rx="4.5" fill="#2dd4bf"/></svg><b>five-ai-terms-people-mix-up</b><i>DEMO</i></a><!-- pb-shell --><!-- pb-back --><a class="pb-back" id="pb-back" href="https://github.com/anhquanbd2021/five-ai-terms-people-mix-up" title="Back to the article — five-ai-terms-people-mix-up">← Article <i>PLAYBOOK</i></a><script>(function(){var a=document.getElementById('pb-back');if(!a)return;var h=location.hostname;if(/^(localhost|127\.0\.0\.1|192\.168\.|10\.|172\.(1[6-9]|2[0-9]|3[01])\.)/.test(h)){a.href='//'+h+':'+(/^(localhost|127\.0\.0\.1)$/.test(h)?'1234':'30082')+'/microsites/article.html?slug=five-ai-terms-people-mix-up';}})();</script><!-- pb-back --></body>
+</html>

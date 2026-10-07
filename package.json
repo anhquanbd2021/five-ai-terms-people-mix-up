@@ -1,0 +1,16 @@
+{
+  "name": "five-ai-terms-people-mix-up-demo",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Term Cost Lab — five simulators that price the confusion between loop/goal, prompt/harness, context/memory, RAG/fine-tuning, prototype/production.",
+  "scripts": {
+    "start": "node app/server.js",
+    "scan": "node scripts/report.mjs",
+    "test": "node --test \"test/*.test.mjs\"",
+    "check": "npm test && npm run scan"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
